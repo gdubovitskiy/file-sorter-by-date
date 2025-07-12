@@ -47,8 +47,15 @@ def main(
     ),
 ):
     """Sort files from SOURCE to DESTINATION based on dates in filenames (YYYYMMDD_*)."""
+    # Создаем полный путь к лог-файлу в целевой директории
     dest_log_path = destination / log_file
+
+    # Явно создаем целевую директорию если её нет
+    destination.mkdir(parents=True, exist_ok=True)
+
+    # Инициализируем логгер с полным путем
     init_logger(dest_log_path)
+
     validate_directories(source, destination)
 
     files = [f.name for f in source.glob("*_*") if f.is_file()]

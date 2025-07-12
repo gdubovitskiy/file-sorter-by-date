@@ -3,10 +3,17 @@ from pathlib import Path
 
 
 def init_logger(log_file: Path) -> None:
-    """Инициализация логгера с созданием родительских директорий"""
-    log_file.parent.mkdir(parents=True, exist_ok=True)
-    if log_file.exists():
-        log_file.unlink()
+    """Инициализация логгера с гарантированным созданием директорий"""
+    try:
+        # Создаем все родительские директории
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+
+        # Создаем/очищаем файл
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] LOG INITIALIZED\n")
+    except Exception as e:
+        print(f"⚠️ Failed to initialize logger: {str(e)}")
+        raise
 
 
 def log_message(message: str, log_file: Path) -> None:
