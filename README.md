@@ -26,7 +26,7 @@
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/file-sorter-by-date.git
+git clone https://github.com/gdubovitskiy/file-sorter-by-date.git
 cd file-sorter-by-date
 
 # Install dependencies
@@ -90,7 +90,7 @@ src/
 
 ## 📧 Contact
 
-Dubovitskiy George - [@your_twitter](https://twitter.com/your_twitter) - gdubovitskiy@ya.ru
+Dubovitskiy George - [@gdubovitskiy](https://t.me/gdubovitskiy) - gdubovitskiy@ya.ru
 
 ---
 
