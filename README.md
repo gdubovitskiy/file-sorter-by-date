@@ -88,10 +88,6 @@ src/
    chmod +x src/cli.py
    ```
 
-## 📧 Contact
-
-Dubovitskiy George - [@gdubovitskiy](https://t.me/gdubovitskiy) - gdubovitskiy@ya.ru
-
 ---
 
 ### 🎯 Example Workflow
