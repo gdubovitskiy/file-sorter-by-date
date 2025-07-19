@@ -4,9 +4,58 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
+from PIL import Image, UnidentifiedImageError
+from PIL.ExifTags import TAGS
 from tqdm import tqdm
 
 from .logger import log_message
+
+
+def get_image_date_exif(filepath: Path) -> Optional[datetime]:
+    """Extract date from image EXIF DateTime tag"""
+    try:
+        with Image.open(filepath) as img:
+            exif = img.getexif()
+            if exif:
+                for tag_id, value in exif.items():
+                    tag = TAGS.get(tag_id, tag_id)
+                    if tag == "DateTime" and value:
+                        return datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+    except (UnidentifiedImageError, AttributeError, ValueError):
+        return None
+    return None
+
+
+def parse_filename_date(filename: str) -> Optional[datetime]:
+    """Try multiple date formats from filename with enhanced pattern matching"""
+    base_name = Path(filename).stem
+    date_formats = [
+        "%Y-%m-%d %H.%M.%S",  # 2014-07-09 21.46.17
+        "%Y%m%d_%H%M%S",  # 20201231_235959
+        "%Y%m%d",  # 20201231
+        "%Y-%m-%d",  # 2020-12-31
+        "%d.%m.%Y",  # 31.12.2020
+        "%m%d%Y",  # 12312020 (US format)
+        "%Y_%m_%d",  # 2020_12_31
+        "%Y%m%d%H%M%S",  # 20201231235959
+    ]
+
+    clean_name = (
+        base_name.replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
+    )
+    for fmt in ["%Y%m%d%H%M%S", "%Y%m%d"]:
+        try:
+            return datetime.strptime(clean_name[: len(fmt)].ljust(len(fmt), "0"), fmt)
+        except ValueError:
+            continue
+
+    for fmt in date_formats:
+        try:
+            return datetime.strptime(base_name[: len(fmt)], fmt)
+        except ValueError:
+            continue
+
+    return None
 
 
 def process_single_file(
@@ -14,51 +63,40 @@ def process_single_file(
     source_dir: Path,
     dest_dir: Path,
     log_file: Path,
+    copy: bool = False,
     dry_run: bool = False,
 ) -> Optional[bool]:
-    """
-    Process a single file by:
-    1. Extracting date from filename (YYYYMMDD_* format)
-    2. Creating target directory structure (YYYY/MM)
-    3. Moving file to destination
-
-    Args:
-        filename: Name of file to process
-        source_dir: Source directory Path object
-        dest_dir: Destination root directory Path
-        log_file: Path to log file
-        dry_run: If True, only simulate operation
-
-    Returns:
-        bool: True if success, False if error, None if skipped
-    """
+    """Process file by date from EXIF or filename with enhanced logging"""
     try:
-        if "_" not in filename:
-            return None
+        filepath = source_dir / filename
 
-        # Extract date from filename
-        date_part = filename.split("_")[0]
-        date = datetime.strptime(date_part, "%Y%m%d")
+        date = get_image_date_exif(filepath)
+
+        if date is None:
+            date = parse_filename_date(filename)
+            if date is None:
+                log_message(f"SKIPPED: No date found in {filename}", log_file)
+                return None
+
         year, month = date.year, f"{date.month:02d}"
-
-        # Prepare destination path
         dest_path = dest_dir / str(year) / month / filename
 
         if not dry_run:
             dest_path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.move(str(source_dir / filename), str(dest_path))
+            if copy:
+                shutil.copy(str(filepath), str(dest_path))  # Copy file
+            else:
+                shutil.move(str(filepath), str(dest_path))  # Move file
 
+        source = "EXIF" if get_image_date_exif(filepath) else "filename"
         log_message(
-            f"{'DRY RUN' if dry_run else 'MOVED'}: {filename} -> {year}/{month}",
+            f"{'DRY RUN' if dry_run else 'MOVED' if not copy else 'COPIED'} ({source}): {filename} -> {year}/{month}",
             log_file,
         )
         return True
 
-    except ValueError as e:
-        log_message(f"ERROR: Invalid date in filename {filename} - {str(e)}", log_file)
-        return False
     except Exception as e:
-        log_message(f"ERROR: Failed to process {filename} - {str(e)}", log_file)
+        log_message(f"ERROR processing {filename}: {str(e)}", log_file)
         return False
 
 
@@ -68,20 +106,11 @@ def process_files(
     dest_dir: Path,
     workers: int = 8,
     log_file: Path = Path("log.txt"),
+    copy: bool = False,
     dry_run: bool = False,
 ) -> None:
-    """
-    Process files in parallel using ThreadPoolExecutor
-
-    Args:
-        files: List of filenames to process
-        source_dir: Source directory Path
-        dest_dir: Destination directory Path
-        workers: Number of worker threads
-        log_file: Path to log file
-        dry_run: Simulation mode flag
-    """
-    with tqdm(total=len(files), desc="Processing files") as progress_bar:
+    """Process files in parallel with progress tracking"""
+    with tqdm(total=len(files), desc="Processing files") as pbar:
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = {
                 executor.submit(
@@ -90,6 +119,7 @@ def process_files(
                     source_dir,
                     dest_dir,
                     log_file,
+                    copy,
                     dry_run,
                 ): filename
                 for filename in files
@@ -97,5 +127,5 @@ def process_files(
 
             for future in as_completed(futures):
                 future.result()
-                progress_bar.update(1)
-                progress_bar.set_postfix_str(f"Last: {futures[future]}", refresh=False)
+                pbar.update(1)
+                pbar.set_postfix_str(f"Last: {futures[future]}", refresh=False)

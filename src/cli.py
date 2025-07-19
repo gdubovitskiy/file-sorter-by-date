@@ -39,32 +39,35 @@ def main(
     workers: int = typer.Option(
         8, "--workers", "-w", help="Number of parallel threads", min=1, max=32
     ),
-    log_file: Path = typer.Option(
-        "log.txt", "--log", "-l", help="Path to log file"
+    log_file: Path = typer.Option("log.txt", "--log", "-l", help="Path to log file"),
+    copy: bool = typer.Option(
+        False, "--copy", help="Copy files instead of moving them"
     ),
     dry_run: bool = typer.Option(
         False, "--dry-run", help="Simulate without moving files"
     ),
 ):
     """Sort files from SOURCE to DESTINATION based on dates in filenames (YYYYMMDD_*)."""
-    # Создаем полный путь к лог-файлу в целевой директории
-    dest_log_path = destination / log_file
+    log_file_path = destination / log_file
 
-    # Явно создаем целевую директорию если её нет
     destination.mkdir(parents=True, exist_ok=True)
 
-    # Инициализируем логгер с полным путем
-    init_logger(dest_log_path)
+    init_logger(log_file_path)
 
     validate_directories(source, destination)
 
-    files = [f.name for f in source.glob("*_*") if f.is_file()]
-    if not files:
-        typer.echo("❌ No files matching pattern 'YYYYMMDD_*' found!", err=True)
-        raise typer.Exit(1)
+    files = [f.name for f in source.iterdir() if f.is_file()]
 
-    process_files(files, source, destination, workers, log_file, dry_run)
-    typer.echo(f"\n✅ Done! Check logs in {log_file}")
+    process_files(
+        files,
+        source,
+        destination,
+        workers,
+        log_file_path,
+        copy,
+        dry_run,
+    )
+    typer.echo(f"\n✅ Done! Check logs in {log_file_path}")
 
 
 if __name__ == "__main__":

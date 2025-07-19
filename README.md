@@ -16,6 +16,7 @@
 - 📝 **Detailed logging** of all operations
 - ✔️ **Automatic directory validation**
 - 🛠️ **Error handling** with clear messages
+- 📂 **File copying option** in addition to moving files
 
 ## ⚡ Quick Start
 
@@ -40,6 +41,9 @@ poetry run file-sorter ~/source_folder ~/destination_folder
 
 # With progress display and logging
 poetry run file-sorter ~/Photos ~/Sorted --workers 4 --log migration.log
+
+# Copy files instead of moving
+poetry run file-sorter ~/Photos ~/Sorted --copy
 ```
 
 ### Command Options
@@ -48,6 +52,7 @@ Options:
   --workers, -w INTEGER  Number of parallel threads [4-32] (default: 8)
   --log, -l TEXT         Name of log file (default: log.txt)
   --dry-run              Simulation mode (no actual file moves)
+  --copy                 Copy files instead of moving them
   --help                 Show this message and exit
 ```
 
@@ -56,7 +61,7 @@ Options:
 1. **Scans** source directory for files matching `YYYYMMDD_*` pattern
 2. **Validates** directory permissions and existence
 3. **Creates** folder structure `Destination/YYYY/MM/`
-4. **Moves** files with parallel processing
+4. **Moves or copies** files with parallel processing
 5. **Logs** all actions with timestamps
 
 ## 🛠️ Project Structure
@@ -101,4 +106,7 @@ cat sorting_log.txt
 
 # 3. Run for real with 8 threads
 poetry run file-sorter ~/DCIM/Camera ~/Photos/Organized --workers 8
+
+# 4. Run with copy option
+poetry run file-sorter ~/DCIM/Camera ~/Photos/Organized --copy
 ```
