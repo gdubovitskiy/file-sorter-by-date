@@ -28,21 +28,17 @@ def get_image_date_exif(filepath: Path) -> Optional[datetime]:
 
 def parse_filename_date(filename: str) -> Optional[datetime]:
     """Try multiple date formats from filename with enhanced pattern matching"""
-    base_name = Path(filename).stem
-    date_formats = [
-        "%Y-%m-%d %H.%M.%S",  # 2014-07-09 21.46.17
-        "%Y%m%d_%H%M%S",  # 20201231_235959
-        "%Y%m%d",  # 20201231
-        "%Y-%m-%d",  # 2020-12-31
-        "%d.%m.%Y",  # 31.12.2020
-        "%m%d%Y",  # 12312020 (US format)
-        "%Y_%m_%d",  # 2020_12_31
-        "%Y%m%d%H%M%S",  # 20201231235959
-    ]
+    from src.config import date_formats
 
+    base_name = Path(filename).stem
     clean_name = (
-        base_name.replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
+        base_name
+        .replace(" ", "")
+        .replace("-", "")
+        .replace("_", "")
+        .replace(".", "")
     )
+
     for fmt in ["%Y%m%d%H%M%S", "%Y%m%d"]:
         try:
             return datetime.strptime(clean_name[: len(fmt)].ljust(len(fmt), "0"), fmt)
@@ -59,12 +55,12 @@ def parse_filename_date(filename: str) -> Optional[datetime]:
 
 
 def process_single_file(
-    filename: str,
-    source_dir: Path,
-    dest_dir: Path,
-    log_file: Path,
-    copy: bool = False,
-    dry_run: bool = False,
+        filename: str,
+        source_dir: Path,
+        dest_dir: Path,
+        log_file: Path,
+        copy: bool = False,
+        dry_run: bool = False,
 ) -> Optional[bool]:
     """Process file by date from EXIF or filename with enhanced logging"""
     try:
@@ -100,13 +96,13 @@ def process_single_file(
 
 
 def process_files(
-    files: List[str],
-    source_dir: Path,
-    dest_dir: Path,
-    workers: int = 8,
-    log_file: Path = Path("log.txt"),
-    copy: bool = False,
-    dry_run: bool = False,
+        files: List[str],
+        source_dir: Path,
+        dest_dir: Path,
+        workers: int = 8,
+        log_file: Path = Path("log.txt"),
+        copy: bool = False,
+        dry_run: bool = False,
 ) -> None:
     """Process files in parallel with progress tracking"""
     with tqdm(total=len(files), desc="Processing files") as pbar:
