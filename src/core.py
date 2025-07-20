@@ -71,12 +71,14 @@ def process_single_file(
         filepath = source_dir / filename
 
         date = get_image_date_exif(filepath)
+        source = "EXIF"
 
         if date is None:
             date = parse_filename_date(filename)
             if date is None:
                 log_message(f"SKIPPED: No date found in {filename}", log_file)
                 return None
+            source = "filename"
 
         year, month = date.year, f"{date.month:02d}"
         dest_path = dest_dir / str(year) / month / filename
@@ -88,7 +90,6 @@ def process_single_file(
             else:
                 shutil.move(str(filepath), str(dest_path))  # Move file
 
-        source = "EXIF" if get_image_date_exif(filepath) else "filename"
         log_message(
             f"{'DRY RUN' if dry_run else 'MOVED' if not copy else 'COPIED'} ({source}): {filename} -> {year}/{month}",
             log_file,
