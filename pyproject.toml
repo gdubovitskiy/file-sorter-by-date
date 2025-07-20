@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "file-sorter-by-date"
+name = "media-sorter"
 version = "0.1.0"
 description = "Organize files by date using Typer CLI"
 authors = ["Dubovitskiy George <gdubovitskiy@ya.ru>"]
@@ -19,7 +19,7 @@ pytest = "^7.4.0"
 black = "^23.7.0"
 
 [tool.poetry.scripts]
-file-sorter = "src.cli:app"
+media-sorter = "src.cli:app"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

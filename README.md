@@ -1,7 +1,7 @@
 # 📂 File Sorter by Date
 
 **Automatically organize files into `YYYY/MM` folders based on dates in filenames**  
-*(Perfect for photos, documents, and any files with `YYYYMMDD_*` pattern)*
+*(Perfect for photos, documents, and any files with EXIF-data or pattern filename)*
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Typer CLI](https://img.shields.io/badge/CLI-Typer-FF4785)](https://typer.tiangolo.com/)
@@ -10,7 +10,7 @@
 ## ✨ Features
 
 - 🚀 **Parallel processing** with configurable worker threads (4-32)
-- 📅 **Smart date detection** from filenames (`YYYYMMDD_*` pattern)
+- 📅 **Smart date detection** from EXIF-data or filenames pattern
 - 📊 **Visual progress tracking** with tqdm
 - 🧪 **Dry-run mode** for safe testing
 - 📝 **Detailed logging** of all operations
@@ -27,8 +27,8 @@
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/gdubovitskiy/file-sorter-by-date.git
-cd file-sorter-by-date
+git clone https://github.com/gdubovitskiy/media-sorter.git
+cd media-sorter
 
 # Install dependencies
 poetry install
@@ -37,13 +37,13 @@ poetry install
 ### Basic Usage
 ```bash
 # Simple organization
-poetry run file-sorter ~/source_folder ~/destination_folder
+poetry run media-sorter ~/source_folder ~/destination_folder
 
 # With progress display and logging
-poetry run file-sorter ~/Photos ~/Sorted --workers 4 --log migration.log
+poetry run media-sorter ~/Photos ~/Sorted --workers 4 --log migration.log
 
 # Copy files instead of moving
-poetry run file-sorter ~/Photos ~/Sorted --copy
+poetry run media-sorter ~/Photos ~/Sorted --copy
 ```
 
 ### Command Options
@@ -99,14 +99,14 @@ src/
 
 ```bash
 # 1. First do a dry-run
-poetry run file-sorter ~/DCIM/Camera ~/Photos/Organized --dry-run
+poetry run media-sorter ~/DCIM/Camera ~/Photos/Organized --dry-run
 
 # 2. Check the log
 cat sorting_log.txt
 
 # 3. Run for real with 8 threads
-poetry run file-sorter ~/DCIM/Camera ~/Photos/Organized --workers 8
+poetry run media-sorter ~/DCIM/Camera ~/Photos/Organized --workers 8
 
 # 4. Run with copy option
-poetry run file-sorter ~/DCIM/Camera ~/Photos/Organized --copy
+poetry run media-sorter ~/DCIM/Camera ~/Photos/Organized --copy
 ```
