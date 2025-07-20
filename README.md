@@ -1,4 +1,4 @@
-# 📂 File Sorter by Date
+# 📂 Media Sorter by Date
 
 **Automatically organize files into `YYYY/MM` folders based on dates in filenames**  
 *(Perfect for photos, documents, and any files with EXIF-data or pattern filename)*
