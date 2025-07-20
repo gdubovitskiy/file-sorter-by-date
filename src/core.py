@@ -90,10 +90,8 @@ def process_single_file(
             else:
                 shutil.move(str(filepath), str(dest_path))  # Move file
 
-        log_message(
-            f"{'DRY RUN' if dry_run else 'MOVED' if not copy else 'COPIED'} ({source}): {filename} -> {year}/{month}",
-            log_file,
-        )
+        status = 'DRY RUN' if dry_run else 'MOVED' if not copy else 'COPIED'
+        log_message(f"{status:<10} ({source:^10}): {filename:<30} -> {year}/{month}", log_file, )
         return True
 
     except Exception as e:
