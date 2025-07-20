@@ -84,8 +84,8 @@ src/
    ```
 
 2. **No files found**:
-   - Ensure filenames contain dates in `YYYYMMDD_*` format
-   - Check source directory permissions
+    - Ensure filenames contain dates in `YYYYMMDD_*` format
+    - Check source directory permissions
 
 3. **Permission errors**:
    ```bash
