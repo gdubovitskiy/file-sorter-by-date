@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import typer
 
@@ -11,7 +11,7 @@ def validate_directories(source: Path, destination: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
 
 
-def print_param(label: str, value: str, icon: Optional[str] = None, color: Optional[str] = None):
+def print_param(label: str, value: Any, icon: Optional[str] = None, color: Optional[str] = None):
     """Печатает параметр с иконкой и стилем."""
     formatted_label = typer.style(f"{label}:", bold=True)
     formatted_value = typer.style(str(value), fg=color) if color else str(value)
