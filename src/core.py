@@ -57,13 +57,7 @@ def parse_date_from_filename(filename: str) -> Optional[datetime]:
     from src.config import DATE_FORMATS
 
     base_name = Path(filename).stem
-    clean_name = (
-        base_name
-        .replace(" ", "")
-        .replace("-", "")
-        .replace("_", "")
-        .replace(".", "")
-    )
+    clean_name = base_name.replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
 
     for fmt in ["%Y%m%d%H%M%S", "%Y%m%d"]:
         try:

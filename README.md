@@ -1,6 +1,6 @@
 # 📂 Media Sorter by Date
 
-**Automatically organize files into `YYYY/MM` folders based on dates in filenames**  
+**Automatically organize files into `YYYY/MM` folders based on dates in filenames**
 *(Perfect for photos, documents, and any files with EXIF-data or pattern filename)*
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
