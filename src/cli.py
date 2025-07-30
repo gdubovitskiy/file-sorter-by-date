@@ -11,7 +11,7 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    source: Path = typer.Argument(
+    source: Path = typer.Argument(  # noqa: B008
         ...,
         help="📁 Source directory with files",
         exists=True,
@@ -21,7 +21,7 @@ def main(
         resolve_path=True,
         callback=validate_path,
     ),
-    destination: Path = typer.Argument(
+    destination: Path = typer.Argument(  # noqa: B008
         ...,
         help="📂 Target directory for organized files",
         file_okay=False,
@@ -31,7 +31,7 @@ def main(
         callback=validate_path,
     ),
     workers: int = typer.Option(8, "--workers", "-w", help="Number of parallel threads", min=1, max=32),
-    log_file: Path = typer.Option("log.txt", "--log", "-l", help="Path to log file"),
+    log_file: Path = typer.Option("log.txt", "--log", "-l", help="Path to log file"),  # noqa: B008
     copy: bool = typer.Option(False, "--copy", help="Copy files instead of moving them"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Simulate without moving files"),
 ):
