@@ -26,6 +26,7 @@ def extract_exif_date(filepath: Path) -> Optional[datetime]:
         2023-01-15 12:30:45
     """
     from src.config import EXIF_DATE_TAG
+
     try:
         with Image.open(filepath) as img:
             exif = img.getexif()
@@ -80,12 +81,12 @@ def parse_date_from_filename(filename: str) -> Optional[datetime]:
 
 
 def process_file(
-        filename: str,
-        source_dir: Path,
-        dest_dir: Path,
-        log_file: Path,
-        copy: bool = False,
-        dry_run: bool = False,
+    filename: str,
+    source_dir: Path,
+    dest_dir: Path,
+    log_file: Path,
+    copy: bool = False,
+    dry_run: bool = False,
 ) -> Optional[bool]:
     """Processes a single file by organizing it into date-based directory structure.
 
@@ -129,8 +130,11 @@ def process_file(
             else:
                 shutil.move(str(filepath), str(dest_path))  # Move file
 
-        status = 'DRY RUN' if dry_run else 'MOVED' if not copy else 'COPIED'
-        log_message(f"{status:<10} ({source:^10}): {filename:<30} -> {year}/{month}", log_file, )
+        status = "DRY RUN" if dry_run else "MOVED" if not copy else "COPIED"
+        log_message(
+            f"{status:<10} ({source:^10}): {filename:<30} -> {year}/{month}",
+            log_file,
+        )
         return True
 
     except Exception as e:
@@ -139,13 +143,13 @@ def process_file(
 
 
 def process_files(
-        files: List[str],
-        source_dir: Path,
-        dest_dir: Path,
-        workers: int = 8,
-        log_file: Path = Path("log.txt"),
-        copy: bool = False,
-        dry_run: bool = False,
+    files: List[str],
+    source_dir: Path,
+    dest_dir: Path,
+    workers: int = 8,
+    log_file: Path = Path("log.txt"),
+    copy: bool = False,
+    dry_run: bool = False,
 ) -> None:
     """Processes multiple files in parallel with progress tracking.
 
