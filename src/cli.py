@@ -4,7 +4,7 @@ import typer
 
 from .core import process_files
 from .logger import init_logger
-from .utils import validate_directories, print_param, validate_path
+from .utils import print_param, validate_directories, validate_path
 
 app = typer.Typer()
 

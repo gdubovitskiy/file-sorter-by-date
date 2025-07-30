@@ -25,7 +25,6 @@ def extract_exif_date(filepath: Path) -> Optional[datetime]:
         >>> print(date)
         2023-01-15 12:30:45
     """
-
     from src.config import EXIF_DATE_TAG
     try:
         with Image.open(filepath) as img:
